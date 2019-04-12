@@ -2,6 +2,7 @@ package com.your.photograph;
 
 import android.content.Context;
 import android.content.Intent;
+import android.hardware.Camera;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -41,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
     TextView tvBankResult;
 
     private Context mContext;
+    private Camera camera;
 
     public final int REQUESTCODE_FROM_ID_CARD_FONT = 102;
 
@@ -126,6 +128,32 @@ public class MainActivity extends AppCompatActivity {
                     tvBankResult.setText("银行名称："+entryBankCard.getBankName()+"\n银行卡号："+entryBankCard.getBankCardNumber()+"\n银行卡类型："+bankType);
                     break;
             }
+        }
+    }
+
+
+    //打开闪光灯
+    private void open() {
+        try {
+            camera = Camera.open();
+            camera.startPreview();
+            Camera.Parameters parameters = camera.getParameters();
+            parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+            camera.setParameters(parameters);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void close() {
+        try {
+            Camera.Parameters parameters = camera.getParameters();
+            parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+            camera.setParameters(parameters);
+            camera.release();
+            camera=null;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

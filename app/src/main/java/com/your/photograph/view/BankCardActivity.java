@@ -83,6 +83,7 @@ public class BankCardActivity extends AppCompatActivity {
     }
 
     private void intView(){
+        title.setLeftIcon(R.mipmap.bar_icon_back_white);
         //判断传递过来的方向
         idCardSide=getIntent().getStringExtra(Constant.SCANNING_TYPE);
         if (idCardSide.equals(Constant.BANK_CARD_BG)){
@@ -213,6 +214,7 @@ public class BankCardActivity extends AppCompatActivity {
             }
         });
         mCameraView.setMaskView(maskView);
+
     }
 
     private void showPicture(Bitmap bitmap) {

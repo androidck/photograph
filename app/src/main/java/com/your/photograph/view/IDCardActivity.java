@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.hardware.Camera;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -14,6 +15,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -36,6 +38,7 @@ import java.io.File;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import me.pqpo.smartcameralib.MaskView;
@@ -50,6 +53,9 @@ public class IDCardActivity extends AppCompatActivity {
     SmartCameraView mCameraView;
     @BindView(R.id.img_bg)
     ImageView imgBg;
+    @BindView(R.id.btn_open)
+    Button btnOpen;
+    private Camera camera;
 
     private boolean granted = false;
     private Context mContext;
@@ -83,6 +89,7 @@ public class IDCardActivity extends AppCompatActivity {
     }
 
     private void intView() {
+        title.setLeftIcon(R.mipmap.bar_icon_back_white);
         //判断传递过来的方向
         idCardSide = getIntent().getStringExtra(Constant.SCANNING_TYPE);
         //身份证正面照片
@@ -182,6 +189,7 @@ public class IDCardActivity extends AppCompatActivity {
             public void onCameraOpened(CameraImpl camera) {
                 super.onCameraOpened(camera);
             }
+
             @Override
             public void onPictureTaken(CameraImpl camera, byte[] data) {
                 super.onPictureTaken(camera, data);
@@ -322,5 +330,38 @@ public class IDCardActivity extends AppCompatActivity {
                 Log.d("resultIDCard", error.getMessage());
             }
         });
+    }
+
+
+    //打开闪光灯
+    private void open() {
+        try {
+            camera = Camera.open();
+            camera.startPreview();
+            Camera.Parameters parameters = camera.getParameters();
+            parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+            camera.setParameters(parameters);
+            camera.release();
+            camera = null;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void close() {
+        try {
+            Camera.Parameters parameters = camera.getParameters();
+            parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+            camera.setParameters(parameters);
+            camera.release();
+            camera = null;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @OnClick(R.id.btn_open)
+    public void onViewClicked() {
+        open();
     }
 }
